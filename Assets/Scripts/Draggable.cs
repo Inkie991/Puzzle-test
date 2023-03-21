@@ -7,17 +7,38 @@ public class Draggable : MonoBehaviour
 {
     public bool IsDragging;
     public Vector3 LastPosition;
+    private Transform _LastSlot;
 
     private BoxCollider2D _collider;
     private DragController _dragController;
+    private PuzzlePiece _piece;
 
     private float _movementTime = 15f;
     private Nullable<Vector3> _movementDestination;
+
+    private void Awake()
+    {
+        _piece = GetComponent<PuzzlePiece>();
+    }
 
     void Start()
     {
         _collider = GetComponent<BoxCollider2D>();
         _dragController = FindObjectOfType<DragController>();
+    }
+
+    private void Update()
+    {
+        if (_LastSlot == null) return;
+        
+        if (transform.position == _LastSlot.position)
+        {
+            _piece.inSlot = true;
+        }
+        else
+        {
+            _piece.inSlot = false;
+        }
     }
 
     private void FixedUpdate()
@@ -56,7 +77,10 @@ public class Draggable : MonoBehaviour
         if (other.CompareTag("Slot"))
         {
             if (Vector3.Distance(transform.position, other.transform.position) < 0.55)
-                _movementDestination = other.transform.position;
+            {
+                _LastSlot = other.transform;
+                _movementDestination = _LastSlot.position;
+            }
         }
         else _movementDestination = LastPosition;
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,8 +12,10 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private PuzzleSlot _slotPrefab;
 
-    private List<PuzzleSlot> gridList;
-    private Transform gameGrid;
+    private List<PuzzleSlot> _gridList;
+    private Transform _gameGrid;
+
+    private PuzzleManager _puzzleManager;
 
     void GenerateGrid()
     {
@@ -22,21 +25,26 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < _height; y++)
             {
-                PuzzleSlot slot = Instantiate(_slotPrefab, gameGrid);
+                PuzzleSlot slot = Instantiate(_slotPrefab, _gameGrid);
 
                 float posX = (SpawnOffset * x) + startPos.x;
                 float posY = -(SpawnOffset * y) + startPos.y;
                 slot.transform.position = new Vector3(posX, posY, startPos.z);
-                gridList.Add(slot);
+                slot.id.Row = x;
+                slot.id.Coll = y;
+                _gridList.Add(slot);
             }
         }
+        
+        _puzzleManager.SetSlotsAndGenerate(_gridList, _width, _height);
     }
     
 
     void Start()
     {
-        gridList = new();
-        gameGrid = GameObject.FindGameObjectWithTag("Grid").transform;
+        _puzzleManager = GetComponent<PuzzleManager>();
+        _gridList = new();
+        _gameGrid = GameObject.FindGameObjectWithTag("Grid").transform;
         GenerateGrid();
     }
 }
