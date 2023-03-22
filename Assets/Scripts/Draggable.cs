@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class Draggable : MonoBehaviour
 {
+    [HideInInspector]
     public bool IsDragging;
+    [HideInInspector]
     public Vector3 LastPosition;
+    
     private Transform _LastSlot;
 
     private BoxCollider2D _collider;
@@ -66,13 +69,13 @@ public class Draggable : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Draggable colliderDraggable = other.GetComponent<Draggable>();
-        if (colliderDraggable != null && _dragController.LastDragged.gameObject == gameObject)
-        {
-            ColliderDistance2D collDistance = other.Distance(_collider);
-            Vector3 diff = new Vector3(collDistance.normal.x, collDistance.normal.y) * collDistance.distance;
-            transform.position -= diff;
-        }
+        // Draggable colliderDraggable = other.GetComponent<Draggable>();
+        // if (colliderDraggable != null && _dragController.LastDragged.gameObject == gameObject)
+        // {
+        //     ColliderDistance2D collDistance = other.Distance(_collider);
+        //     Vector3 diff = new Vector3(collDistance.normal.x, collDistance.normal.y) * collDistance.distance;
+        //     transform.position -= diff;
+        // }
 
         if (other.CompareTag("Slot"))
         {
