@@ -20,7 +20,6 @@ public class Draggable : MonoBehaviour
     private Nullable<Vector3> _movementDestination;
 
     public bool canMove = true;
-    private bool haveSlot = false;
 
     private void Awake()
     {
