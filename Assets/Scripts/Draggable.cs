@@ -42,7 +42,6 @@ public class Draggable : MonoBehaviour
             _piece.inSlot = true;
             PuzzleSlot slot = _LastSlot.GetComponent<PuzzleSlot>();
             slot.CurrentPiece = _piece;
-            haveSlot = true;
         }
         else
         {
