@@ -47,7 +47,7 @@ public class DragController : MonoBehaviour
             if (hit.collider != null)
             {
                 Draggable draggable = hit.transform.gameObject.GetComponent<Draggable>();
-                if (draggable != null)
+                if (draggable != null && draggable.canMove)
                 {
                     _lastDragged = draggable;
                     InitDrag();

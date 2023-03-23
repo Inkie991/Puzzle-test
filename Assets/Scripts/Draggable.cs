@@ -19,6 +19,9 @@ public class Draggable : MonoBehaviour
     private float _movementTime = 15f;
     private Nullable<Vector3> _movementDestination;
 
+    public bool canMove = true;
+    private bool haveSlot = false;
+
     private void Awake()
     {
         _piece = GetComponent<PuzzlePiece>();
@@ -33,14 +36,21 @@ public class Draggable : MonoBehaviour
     private void Update()
     {
         if (_LastSlot == null) return;
-        
-        if (transform.position == _LastSlot.position)
+
+        if (Vector3.Distance(transform.position, _LastSlot.position) < 0.1f)
         {
+            transform.position = _LastSlot.position;
             _piece.inSlot = true;
+            PuzzleSlot slot = _LastSlot.GetComponent<PuzzleSlot>();
+            slot.CurrentPiece = _piece;
+            haveSlot = true;
         }
         else
         {
             _piece.inSlot = false;
+            PuzzleSlot slot = _LastSlot.GetComponent<PuzzleSlot>();
+            slot.CurrentPiece = null;
+            _LastSlot = null;
         }
     }
 
@@ -76,13 +86,20 @@ public class Draggable : MonoBehaviour
         //     Vector3 diff = new Vector3(collDistance.normal.x, collDistance.normal.y) * collDistance.distance;
         //     transform.position -= diff;
         // }
-
+        
         if (other.CompareTag("Slot"))
         {
-            if (Vector3.Distance(transform.position, other.transform.position) < 0.55)
+            if (other.transform.GetComponent<PuzzleSlot>().CurrentPiece == null)
             {
-                _LastSlot = other.transform;
-                _movementDestination = _LastSlot.position;
+                if (Vector3.Distance(transform.position, other.transform.position) < 0.55)
+                {
+                    _LastSlot = other.transform;
+                    _movementDestination = _LastSlot.position;
+                    PuzzleSlot slot = _LastSlot.GetComponent<PuzzleSlot>();
+                    slot.CurrentPiece = _piece;
+                    _piece.currentSlot = slot.id;
+                    Managers.Gameplay.CheckConnection(_piece);
+                }
             }
         }
         else _movementDestination = LastPosition;

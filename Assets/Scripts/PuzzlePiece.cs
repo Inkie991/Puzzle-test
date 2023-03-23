@@ -1,7 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PuzzlePiece : MonoBehaviour
@@ -29,25 +26,11 @@ public class PuzzlePiece : MonoBehaviour
     [HideInInspector]
     public bool inSlot;
     public SlotId correctSlot;
+    public SlotId currentSlot;
     public BorderInfo leftBorder;
     public BorderInfo rightBorder;
     public BorderInfo topBorder;
     public BorderInfo bottomBorder;
-    
-    void Update()
-    {
-
-    }
-    
-    void Start()
-    {
-        
-    }
-
-    // public bool CheckConnection()
-    // {
-    //     
-    // }
 
     public void ConstructPiece()
     {
@@ -76,6 +59,8 @@ public class PuzzlePiece : MonoBehaviour
             }
         }
 
+        // string temp = gameObject.name;
+        // gameObject.name = temp + " " + correctSlot.Row + " " + correctSlot.Coll;
     }
 
     private void SetShape(BorderShape shape, GameObject innerTriangle, GameObject outerTriangle)
@@ -99,8 +84,53 @@ public class PuzzlePiece : MonoBehaviour
 
     private void SetColor(BorderColor color, GameObject innerTriangle, GameObject outerTriangle, GameObject colorBorder)
     {
-        innerTriangle.GetComponent<SpriteRenderer>().color = BorderManager.GetColor(color);
-        outerTriangle.GetComponent<SpriteRenderer>().color = BorderManager.GetColor(color);
-        colorBorder.GetComponent<SpriteRenderer>().color = BorderManager.GetColor(color);
+        innerTriangle.GetComponent<SpriteRenderer>().color = Utils.GetColor(color);
+        outerTriangle.GetComponent<SpriteRenderer>().color = Utils.GetColor(color);
+        colorBorder.GetComponent<SpriteRenderer>().color = Utils.GetColor(color);
+    }
+
+    public BorderInfo GetBorder(BorderSide side)
+    {
+        switch (side)
+        {
+            case BorderSide.Left:
+                return leftBorder;
+            case BorderSide.Top:
+                return topBorder;
+            case BorderSide.Right:
+                return rightBorder;
+            case BorderSide.Bottom:
+                return bottomBorder;
+        }
+
+        return new BorderInfo();
+    }
+
+    public void AttachToSlot()
+    {
+        GetComponent<Draggable>().canMove = false;
+        StartCoroutine(Anim());
+    }
+
+    private IEnumerator Anim()
+    {
+        SpriteRenderer[] sprites = GetComponentsInChildren<SpriteRenderer>();
+        foreach (var sprite in sprites)
+        {
+            Color color = sprite.color;
+            color.a = 0.5f;
+            sprite.color = color;
+        }
+
+        yield return new WaitForSeconds(1);
+        
+        foreach (var sprite in sprites)
+        {
+            Color color = sprite.color;
+            color.a = 1f;
+            sprite.color = color;
+        }
+        
+        yield return null;
     }
 }
